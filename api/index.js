@@ -14,6 +14,7 @@ const jwtSecret = 'fasdascbauhcbau2adaddac23';
 
 app.use(express.json());
 app.use(cookieParser());
+app.use('/uploads', express.static(__dirname+'/uploads'));
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:5173',
@@ -85,15 +86,15 @@ app.post('/logout', (req,res) => {
   res.cookie('token', '').json(true);
 });
 
+console.log({__dirname});
 app.post('/upload-by-link', async (req,res) => {
   const {link} = req.body;
   const newName = 'photo' + Date.now() + '.jpg';
   await imageDownloader.image({
     url: link,
-    dest: '/tmp/' +newName,
+    dest: __dirname + '/uploads/' +newName,
   });
-  const url = await uploadToS3('/tmp/' +newName, newName, mime.lookup('/tmp/' +newName));
-  res.json(url);
+  res.json(newName);
 });
 
 
